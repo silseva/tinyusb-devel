@@ -30,7 +30,11 @@ tinyusb/src/common/tusb_fifo.c                        \
 tinyusb/src/portable/st/stm32_fsdev/dcd_stm32_fsdev.c \
 tinyusb/src/portable/st/synopsys/dcd_synopsys.c       \
 tinyusb/src/device/usbd.c                             \
-tinyusb/src/device/usbd_control.c
+tinyusb/src/device/usbd_control.c                     \
+\
+gpio.c           \
+usb.c            \
+usb_bsp_MDx.cpp
 
 
 ##
@@ -41,7 +45,7 @@ LIBS :=
 ##
 ## List here additional include directories (in the form -Iinclude_dir)
 ##
-INCLUDE_DIRS := -Itinyusb/src -Itinyusb/hw -Itinyusb/openrtx
+INCLUDE_DIRS := -Itinyusb/src -Itinyusb/hw -Itinyusb/openrtx -DSTM32F411xE
 
 ##############################################################################
 ## You should not need to modify anything below                             ##
