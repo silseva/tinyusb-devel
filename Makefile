@@ -19,7 +19,19 @@ SUBDIRS := $(KPATH)
 ## List here your source files (both .s, .c and .cpp)
 ##
 SRC :=                                  \
-main.cpp
+main.cpp                                \
+\
+tinyusb/src/tusb.c                                    \
+tinyusb/src/class/audio/audio_device.c                \
+tinyusb/src/class/dfu/dfu_device.c                    \
+tinyusb/src/class/dfu/dfu_rt_device.c                 \
+tinyusb/src/class/cdc/cdc_device.c                    \
+tinyusb/src/common/tusb_fifo.c                        \
+tinyusb/src/portable/st/stm32_fsdev/dcd_stm32_fsdev.c \
+tinyusb/src/portable/st/synopsys/dcd_synopsys.c       \
+tinyusb/src/device/usbd.c                             \
+tinyusb/src/device/usbd_control.c
+
 
 ##
 ## List here additional static libraries with relative path
@@ -29,14 +41,14 @@ LIBS :=
 ##
 ## List here additional include directories (in the form -Iinclude_dir)
 ##
-INCLUDE_DIRS :=
+INCLUDE_DIRS := -Itinyusb/src -Itinyusb/hw -Itinyusb/openrtx
 
 ##############################################################################
 ## You should not need to modify anything below                             ##
 ##############################################################################
 
 ifeq ("$(VERBOSE)","1")
-Q := 
+Q :=
 ECHO := @true
 else
 Q := @
