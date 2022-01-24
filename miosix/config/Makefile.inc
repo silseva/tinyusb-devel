@@ -1,6 +1,6 @@
 ##
 ## Makefile for Miosix embedded OS
-## 
+##
 ## This file contains the options required by the build system to build
 ## Miosix on various target architectures. All options start with OPT_
 ## to be easily recognizable.
@@ -51,6 +51,7 @@
 #OPT_BOARD := stm32l476rg_nucleo
 #OPT_BOARD := atsam4lc2aa_generic
 #OPT_BOARD := stm32f411ce_blackpill
+#OPT_BOARD := stm32f411ve_stm32f4discovery
 
 ##
 ## Optimization flags, choose one.
@@ -276,7 +277,7 @@ ifeq ($(OPT_BOARD),stm32f429zi_stm32f4discovery)
     ## 8MB SDRAM memory. Do not uncomment this even if you don't use a linker
     ## script that requires it, as it is used for the LCD framebuffer.
     XRAM := -D__ENABLE_XRAM
-    
+
     ## Select clock frequency. Warning: the default clock frequency for
     ## this board is 168MHz and not 180MHz because, due to a limitation in
     ## the PLL, it is not possible to generate a precise 48MHz output when
@@ -321,7 +322,7 @@ ifeq ($(OPT_BOARD),stm32f429zi_oledboard2)
     ## 8MB SDRAM memory. Do not uncomment this even if you don't use a linker
     ## script that requires it, as it is used for the LCD framebuffer.
     XRAM := -D__ENABLE_XRAM
-    
+
     ## Select clock frequency. Warning: the default clock frequency for
     ## this board is 168MHz and not 180MHz because, due to a limitation in
     ## the PLL, it is not possible to generate a precise 48MHz output when
@@ -367,7 +368,7 @@ ifeq ($(OPT_BOARD),stm32f429zi_skyward_anakin)
     ## 8MB SDRAM memory. Do not uncomment this even if you don't use a linker
     ## script that requires it, as it is used for the LCD framebuffer.
     XRAM := -D__ENABLE_XRAM
-    
+
     ## Select clock frequency.
     ## Warning: due to a limitation in the PLL, it is not possible to generate
     ## a precise 48MHz output when running the core at 180MHz. If 180MHz is
@@ -391,9 +392,9 @@ ifeq ($(OPT_BOARD),stm32f103c8_breakout)
     ## Linker script type, there are two options
     ## 1) Code in FLASH, stack + heap in RAM
     ## 2) Code in FLASH, stack + heap in RAM flashing with bootloader
-    
-    #LINKER_SCRIPT := $(LINKER_SCRIPT_PATH)stm32_64k+20k_bootloader.ld    
-    
+
+    #LINKER_SCRIPT := $(LINKER_SCRIPT_PATH)stm32_64k+20k_bootloader.ld
+
     ## Select clock frequency
     CLOCK_FREQ := -DSYSCLK_FREQ_24MHz=24000000
     #CLOCK_FREQ := -DSYSCLK_FREQ_36MHz=36000000
@@ -430,7 +431,7 @@ ifeq ($(OPT_BOARD),stm32f469ni_stm32f469i-disco)
     ## 16MB SDRAM memory. Do not uncomment this even if you don't use a linker
     ## script that requires it, as it is used for the LCD framebuffer.
     XRAM := -D__ENABLE_XRAM
-    
+
     ## Select clock frequency. Warning: the default clock frequency for
     ## this board is 168MHz and not 180MHz because, due to a limitation in
     ## the PLL, it is not possible to generate a precise 48MHz output when
@@ -459,7 +460,7 @@ ifeq ($(OPT_BOARD),stm32f429zi_skyward_homeone)
     ## Uncommenting __ENABLE_XRAM enables the initialization of the external
     ## 8MB SDRAM memory.
     XRAM := -D__ENABLE_XRAM
-    
+
     ## Select clock frequency. Warning: the default clock frequency for
     ## this board is 168MHz and not 180MHz because, due to a limitation in
     ## the PLL, it is not possible to generate a precise 48MHz output when
@@ -517,12 +518,12 @@ endif
 ##
 
 ifeq ($(OPT_BOARD),stm32f103cx_generic)
-    
+
     # stm32f103c8 has 64K, stm32f103cb has 128K
     LINKER_SCRIPT_PATH := arch/cortexM3_stm32/stm32f103cx_generic/
     #LINKER_SCRIPT := $(LINKER_SCRIPT_PATH)stm32_64k+20k_rom.ld
     LINKER_SCRIPT := $(LINKER_SCRIPT_PATH)stm32_128k+20k_rom.ld
-    
+
     ## Select clock frequency
     CLOCK_FREQ := -DSYSCLK_FREQ_24MHz=24000000 -DRUN_WITH_HSI
     #CLOCK_FREQ := -DSYSCLK_FREQ_24MHz=24000000
@@ -616,6 +617,17 @@ endif
 ##
 
 # No options
+
+##---------------------------------------------------------------------------
+## stm32f411ve_stm32f4discovery
+##
+ifeq ($(OPT_BOARD),stm32f411ve_stm32f4discovery)
+
+    # Select clock frequency
+    CLOCK_FREQ := -DHSE_VALUE=8000000 -DSYSCLK_FREQ_100MHz=100000000
+    #CLOCK_FREQ := -DHSE_VALUE=8000000 -DSYSCLK_FREQ_84MHz=84000000
+
+endif
 
 ############################################################################
 ## From the options selected above, now fill all the variables needed to  ##
@@ -712,6 +724,8 @@ else ifeq ($(OPT_BOARD),atsam4lc2aa_generic)
     ARCH := cortexM4_atsam4l
 else ifeq ($(OPT_BOARD),stm32f411ce_blackpill)
     ARCH := cortexM4_stm32f4
+else ifeq ($(OPT_BOARD),stm32f411ve_stm32f4discovery)
+    ARCH := cortexM4_stm32f4
 else
     $(info Error: no board specified in miosix/config/Makefile.inc)
     $(error Error)
@@ -769,7 +783,7 @@ ifeq ($(ARCH),arm7_lpc2000)
         ## Add a #define to allow querying board name
         CFLAGS_BASE   += -D_BOARD_MIOSIX_BOARD
         CXXFLAGS_BASE += -D_BOARD_MIOSIX_BOARD
-        
+
     ##-------------------------------------------------------------------------
     ## End of board list
     ##
@@ -911,7 +925,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         arch/common/drivers/servo_stm32.cpp
 
         ## Add a #define to allow querying board name
-        CFLAGS_BASE   += -D_BOARD_STM32VLDISCOVERY -DSTM32F10X_MD_VL 
+        CFLAGS_BASE   += -D_BOARD_STM32VLDISCOVERY -DSTM32F10X_MD_VL
         CXXFLAGS_BASE += -D_BOARD_STM32VLDISCOVERY -DSTM32F10X_MD_VL
 
         ## Clock frequency
@@ -925,7 +939,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## board.
         #PROGRAM_CMDLINE := sudo vsprog -cstm32_vl -ms -I main.hex -oe -owf -ovf
         PROGRAM_CMDLINE := stm32flash -w main.hex -v /dev/ttyUSB1
-        
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f100rc_solertegiard
     ##
@@ -946,7 +960,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         arch/common/drivers/servo_stm32.cpp
 
         ## Add a #define to allow querying board name
-        CFLAGS_BASE   += -D_BOARD_SOLERTEGIARD -DSTM32F10X_HD_VL 
+        CFLAGS_BASE   += -D_BOARD_SOLERTEGIARD -DSTM32F10X_HD_VL
         CXXFLAGS_BASE += -D_BOARD_SOLERTEGIARD -DSTM32F10X_HD_VL
 
         ## Clock frequency
@@ -960,7 +974,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## board.
         #PROGRAM_CMDLINE := sudo vsprog -cstm32_vl -ms -I main.hex -oe -owf -ovf
         PROGRAM_CMDLINE := stm32flash -w main.hex -v /dev/ttyUSB1
-            
+
 
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f103ve_strive_mini
@@ -1032,7 +1046,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         -openprjSTM32F10xxE.jflash -openmain.hex -auto -exit
         #PROGRAM_CMDLINE := "c:/Program Files/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/ST-LINK_CLI.exe" \
         #-c JTAG -Rst -P main.hex 0x08000000 -Run
-        
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f103cb_als_mainboard_rev2
     ##
@@ -1065,7 +1079,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## error message saying that 'make program' is not supported for that
         ## board.
         PROGRAM_CMDLINE := stm32flash -w main.bin -v /dev/ttyUSB1
-    
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f100cb_tempsensor
     ##
@@ -1085,7 +1099,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         $(BOARD_INC)/interfaces-impl/bsp.cpp
 
         ## Add a #define to allow querying board name
-        CFLAGS_BASE   += -D_BOARD_TEMPSENSOR -DSTM32F10X_MD_VL 
+        CFLAGS_BASE   += -D_BOARD_TEMPSENSOR -DSTM32F10X_MD_VL
         CXXFLAGS_BASE += -D_BOARD_TEMPSENSOR -DSTM32F10X_MD_VL
 
         ## Clock frequency
@@ -1099,7 +1113,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## error message saying that 'make program' is not supported for that
         ## board.
         PROGRAM_CMDLINE := stm32flash -w main.hex -v /dev/ttyUSB1
-        
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f103c8_breakout
     ##
@@ -1110,7 +1124,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
 
         ## Select linker script and boot file
         ## Their path must be relative to the miosix directory.
-        BOOT_FILE := $(BOARD_INC)/core/stage_1_boot.o        
+        BOOT_FILE := $(BOARD_INC)/core/stage_1_boot.o
         LINKER_SCRIPT := $(BOARD_INC)/stm32_64k+20k_rom.ld
 
         ## Select architecture specific files
@@ -1122,7 +1136,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## Add a #define to allow querying board name
         CFLAGS_BASE   += -D_BOARD_STM32F103C8_BREAKOUT -DSTM32F10X_MD
         CXXFLAGS_BASE += -D_BOARD_STM32F103C8_BREAKOUT -DSTM32F10X_MD
-       
+
         ## Select programmer command line
         ## This is the program that is invoked when the user types
         ## 'make program'
@@ -1131,7 +1145,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## board.
         #PROGRAM_CMDLINE := sudo vsprog -cstm32_vl -ms -I main.hex -oe -owf -ovf
         PROGRAM_CMDLINE := stm32flash -w main.hex -v /dev/ttyUSB1
-        
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f100c8_microboard
     ##
@@ -1152,7 +1166,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         arch/common/drivers/stm32_rtc.cpp
 
         ## Add a #define to allow querying board name
-        CFLAGS_BASE   += -D_BOARD_MICROBOARD -DSTM32F10X_MD_VL 
+        CFLAGS_BASE   += -D_BOARD_MICROBOARD -DSTM32F10X_MD_VL
         CXXFLAGS_BASE += -D_BOARD_MICROBOARD -DSTM32F10X_MD_VL
 
         ## Clock frequency
@@ -1166,7 +1180,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## error message saying that 'make program' is not supported for that
         ## board.
         PROGRAM_CMDLINE := stm32flash -w main.hex -v /dev/ttyUSB0
-        
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f103cx_generic
     ##
@@ -1187,7 +1201,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         arch/common/drivers/stm32_rtc.cpp
 
         ## Add a #define to allow querying board name
-        CFLAGS_BASE   += -D_BOARD_STM32F103CX_GENERIC -DSTM32F10X_MD 
+        CFLAGS_BASE   += -D_BOARD_STM32F103CX_GENERIC -DSTM32F10X_MD
         CXXFLAGS_BASE += -D_BOARD_STM32F103CX_GENERIC -DSTM32F10X_MD
 
         ## Select programmer command line
@@ -1228,7 +1242,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
         ## error message saying that 'make program' is not supported for that
         ## board.
         PROGRAM_CMDLINE := stm32flash -w main.hex -v /dev/ttyUSB0
-    
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f100c8_vaisala_rs41
     ##
@@ -1280,7 +1294,7 @@ else ifeq ($(ARCH),cortexM3_stm32)
     ## Select appropriate compiler flags for both ASM/C/C++/linker
     AFLAGS_BASE   := -mcpu=cortex-m3 -mthumb
     CFLAGS_BASE   += -D_ARCH_CORTEXM3_STM32 $(CLOCK_FREQ) $(XRAM)            \
-                     -mcpu=cortex-m3 -mthumb $(OPT_OPTIMIZATION) -c 
+                     -mcpu=cortex-m3 -mthumb $(OPT_OPTIMIZATION) -c
     CXXFLAGS_BASE += -D_ARCH_CORTEXM3_STM32 $(CLOCK_FREQ) $(XRAM)            \
                      $(OPT_EXCEPT) -mcpu=cortex-m3 -mthumb                   \
                      $(OPT_OPTIMIZATION) -c
@@ -1327,7 +1341,7 @@ else ifeq ($(ARCH),cortexM4_stm32f4)
         $(BOARD_INC)/interfaces-impl/bsp.cpp
 
         ## Add a #define to allow querying board name
-        CFLAGS_BASE   += -D_BOARD_STM32F4DISCOVERY 
+        CFLAGS_BASE   += -D_BOARD_STM32F4DISCOVERY
         CXXFLAGS_BASE += -D_BOARD_STM32F4DISCOVERY
 
         ## Select programmer command line
@@ -1371,7 +1385,7 @@ else ifeq ($(ARCH),cortexM4_stm32f4)
         ## error message saying that 'make program' is not supported for that
         ## board.
         PROGRAM_CMDLINE := stm32flash -w ./main.bin -v /dev/ttyUSB1
-        
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f429zi_stm32f4discovery
     ##
@@ -1631,7 +1645,7 @@ else ifeq ($(ARCH),cortexM4_stm32f4)
         ## error message saying that 'make program' is not supported for that
         ## board.
         PROGRAM_CMDLINE := qstlink2 -cqewV ./main.bin
-        
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f407vg_thermal_test_chip
     ##
@@ -1687,6 +1701,36 @@ else ifeq ($(ARCH),cortexM4_stm32f4)
 
         ## Select clock frequency (HSE_VALUE is the xtal on board, fixed)
         CLOCK_FREQ := -DHSE_VALUE=25000000 -DSYSCLK_FREQ_100MHz=100000000
+
+        ## Select programmer command line
+        ## This is the program that is invoked when the user types
+        ## 'make program'
+        ## The command must provide a way to program the board, or print an
+        ## error message saying that 'make program' is not supported for that
+        ## board.
+        PROGRAM_CMDLINE := qstlink2 -cqewV ./main.bin
+
+    ##-------------------------------------------------------------------------
+    ## BOARD: stm32f411ve_stm32f4discovery
+    ##
+    else ifeq ($(OPT_BOARD),stm32f411ve_stm32f4discovery)
+
+        ## Base directory with header files for this board
+        BOARD_INC := arch/cortexM4_stm32f4/stm32f411ve_stm32f4discovery
+
+        ## Select linker script and boot file
+        ## Their path must be relative to the miosix directory.
+        BOOT_FILE := $(BOARD_INC)/core/stage_1_boot.o
+        LINKER_SCRIPT := $(BOARD_INC)/stm32_512k+128k_rom.ld
+
+        ## Select architecture specific files
+        ## These are the files in arch/<arch name>/<board name>
+        ARCH_SRC :=                                  \
+        $(BOARD_INC)/interfaces-impl/bsp.cpp
+
+        ## Add a #define to allow querying board name
+        CFLAGS_BASE   += -D_BOARD_STM32F411VE_DISCOVERY
+        CXXFLAGS_BASE += -D_BOARD_STM32F411VE_DISCOVERY
 
         ## Select programmer command line
         ## This is the program that is invoked when the user types
@@ -1901,7 +1945,7 @@ else ifeq ($(ARCH),cortexM3_stm32f2)
             dfu-util -d 0fce:f0fa -a 0 -i 0 -s 0x08040000 -D main.bin;     \
             dfu-util -d 0fce:f0fa -a 0 -i 0 -s 0x080ffffc -D magic.bin;    \
             rm magic.bin
-            
+
     ##-------------------------------------------------------------------------
     ## BOARD: stm32f205rc_skyward_stormtrooper
     ##
@@ -1955,7 +1999,7 @@ else ifeq ($(ARCH),cortexM3_stm32f2)
 
         ## Clock frequency
         CLOCK_FREQ := -DHSE_VALUE=8000000 -DSYSCLK_FREQ_120MHz=120000000
-        
+
         ## Select programmer command line
         ## This is the program that is invoked when the user types
         ## 'make program'
@@ -2181,7 +2225,7 @@ else ifeq ($(ARCH),cortexM7_stm32f7)
         ## Not all stm32f7 have the double precision FPU. Those that only
         ## support single precision are built as cortex m4
         ARCHOPTS := -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
-    
+
         ## Base directory with header files for this board
         BOARD_INC := arch/cortexM7_stm32f7/stm32f746zg_nucleo
 
@@ -2251,7 +2295,7 @@ else ifeq ($(ARCH),cortexM7_stm32f7)
     $(ARCH_INC)/interfaces-impl/delays.cpp                   \
     $(ARCH_INC)/interfaces-impl/gpio_impl.cpp                \
     arch/common/CMSIS/Device/ST/STM32F7xx/Source/Templates/system_stm32f7xx.c
-    
+
 ##-----------------------------------------------------------------------------
 ## ARCHITECTURE: cortexM7_stm32h7
 ##
@@ -2408,7 +2452,7 @@ else ifeq ($(ARCH),cortexM0_stm32f0)
                      $(OPT_OPTIMIZATION) -nostdlib
 
     ## Select architecture specific files
-    ## These are the files in arch/<arch name>/common    
+    ## These are the files in arch/<arch name>/common
 
     ARCH_SRC +=                                              \
     arch/common/core/interrupts_cortexMx.cpp                 \
@@ -2598,7 +2642,7 @@ else ifeq ($(ARCH),cortexM4_atsam4l)
         ## Add a #define to allow querying board name
         CFLAGS_BASE   += -D_BOARD_ATSAM4LC2AA_GENERIC
         CXXFLAGS_BASE += -D_BOARD_ATSAM4LC2AA_GENERIC
-        
+
         ## Clock frequency
         CLOCK_FREQ := -DCLOCK_FREQ=12000000
 
@@ -2650,7 +2694,7 @@ else ifeq ($(ARCH),cortexM4_atsam4l)
     $(ARCH_INC)/interfaces-impl/portability.cpp              \
     $(ARCH_INC)/interfaces-impl/gpio_impl.cpp                \
     $(ARCH_INC)/interfaces-impl/delays.cpp
-    
+
 
 ##-----------------------------------------------------------------------------
 ## end of architecture list
