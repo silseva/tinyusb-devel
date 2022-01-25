@@ -62,9 +62,9 @@ const unsigned int TICK_FREQ=1000;
 const unsigned int AUX_TIMER_CLOCK=100000;
 const unsigned int AUX_TIMER_MAX=0xffff; ///<\internal Aux timer is 16 bits
 
-/// Serial port (USART3 PB10=TX, PB11=RX)
-const unsigned int defaultSerial=3;
-const unsigned int defaultSerialSpeed=19200;
+/// Serial port (USART2 PA2=TX, PA3=RX)
+const unsigned int defaultSerial=2;
+const unsigned int defaultSerialSpeed=115200;
 const bool defaultSerialFlowctrl=false;
 // Aux serial port (hardcoded USART2 PA2=TX, PA3=RX).
 // Uncomment AUX_SERIAL to enable. The device will appear as /dev/auxtty.
@@ -72,8 +72,8 @@ const bool defaultSerialFlowctrl=false;
 const unsigned int auxSerialSpeed=9600;
 const bool auxSerialFlowctrl=false;
 //#define SERIAL_1_DMA //Serial 1 is not used, so not enabling DMA
-//#define SERIAL_2_DMA //Serial 2 DMA conflicts with I2S driver in the examples
-#define SERIAL_3_DMA
+#define SERIAL_2_DMA //Serial 2 DMA conflicts with I2S driver in the examples
+//#define SERIAL_3_DMA
 
 //#define I2C_WITH_DMA
 
